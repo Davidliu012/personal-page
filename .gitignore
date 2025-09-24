@@ -1,5 +1,6 @@
 scripts.md
 .DS_Store
+backup/
 
 # Bundler cache
 .bundle

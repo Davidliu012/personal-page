@@ -5,31 +5,74 @@ layout: page
 
 {% include lang.html %}
 
-{% assign df_strftime_m = site.data.locales[lang].df.archives.strftime | default: '/ %m' %}
-{% assign df_dayjs_m = site.data.locales[lang].df.archives.dayjs | default: '/ MM' %}
+{% assign advanced_posts = site.categories['Advanced Learning'] | sort: 'date' | reverse %}
 
-<div id="archives" class="pl-xl-3">
-  {% for post in site.posts %}
-    {% assign cur_year = post.date | date: '%Y' %}
+<div class="content ps-xl-3">
+  {% if advanced_posts and advanced_posts != empty %}
+    <div id="post-list" class="flex-grow-1 px-xl-1">
+      {% for post in advanced_posts %}
+        <article class="card-wrapper card mb-4">
+          <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
+            {% assign card_body_col = '12' %}
 
-    {% if cur_year != last_year %}
-      {% unless forloop.first %}</ul>{% endunless %}
+            {% if post.image %}
+              {% assign src = post.image.path | default: post.image %}
+              {% capture src %}{% include media-url.html src=src subpath=post.media_subpath %}{% endcapture %}
 
-      <time class="year lead d-block">{{ cur_year }}</time>
-      {{ '<ul class="list-unstyled">' }}
+              {% assign alt = post.image.alt | xml_escape | default: 'Preview Image' %}
 
-      {% assign last_year = cur_year %}
-    {% endif %}
+              {% assign lqip = null %}
 
-    <li>
-      {% assign ts = post.date | date: '%s' %}
-      <span class="date day" data-ts="{{ ts }}" data-df="DD">{{ post.date | date: '%d' }}</span>
-      <span class="date month small text-muted ms-1" data-ts="{{ ts }}" data-df="{{ df_dayjs_m }}">
-        {{ post.date | date: df_strftime_m }}
-      </span>
-      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    </li>
+              {% if post.image.lqip %}
+                {% capture lqip_url %}{% include media-url.html src=post.image.lqip subpath=post.media_subpath %}{% endcapture %}
+                {% assign lqip = 'lqip="' | append: lqip_url | append: '"' %}
+              {% endif %}
 
-    {% if forloop.last %}</ul>{% endif %}
-  {% endfor %}
+              <div class="col-md-5">
+                <img src="{{ src }}" alt="{{ alt }}" {{ lqip }}>
+              </div>
+
+              {% assign card_body_col = '7' %}
+            {% endif %}
+
+            <div class="col-md-{{ card_body_col }}">
+              <div class="card-body d-flex flex-column h-100">
+                <h2 class="card-title my-2 mt-md-0 h4">{{ post.title }}</h2>
+
+                <div class="card-text content mt-0 mb-3">
+                  <p>{% include post-description.html %}</p>
+                </div>
+
+                <div class="post-meta mt-auto d-flex align-items-end">
+                  <div class="me-auto">
+                    <i class="far fa-calendar fa-fw me-1"></i>
+                    {% include datetime.html date=post.date lang=lang %}
+
+                    {% if post.categories.size > 0 %}
+                      <i class="far fa-folder-open fa-fw me-1 ms-3"></i>
+                      <span class="categories">
+                        {% for category in post.categories %}
+                          {{ category }}
+                          {%- unless forloop.last -%},{%- endunless -%}
+                        {% endfor %}
+                      </span>
+                    {% endif %}
+                  </div>
+
+                  {% if post.pin %}
+                    <div class="pin ms-2">
+                      <i class="fas fa-thumbtack fa-fw"></i>
+                      <span>{{ site.data.locales[lang].post.pin_prompt }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-muted">No advanced learning notes yet. Check back soon.</p>
+  {% endif %}
 </div>

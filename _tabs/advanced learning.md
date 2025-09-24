@@ -1,5 +1,6 @@
 ---
 layout: advanced
 icon: fas fa-tags
-order: 5
+order: 3
+title: Advanced Learning
 ---
