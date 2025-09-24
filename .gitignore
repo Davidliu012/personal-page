@@ -1,3 +1,6 @@
+scripts.md
+.DS_Store
+
 # Bundler cache
 .bundle
 vendor
